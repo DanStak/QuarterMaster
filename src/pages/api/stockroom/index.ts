@@ -17,7 +17,7 @@ const POST = async ({req, res, session}: RouteArgs) => {
         await db.stockroom.create({
             data: {
                 name: req.body.name,
-                ownerId: session.user.id
+                ownerId: session!.user.id
             }
         })
 

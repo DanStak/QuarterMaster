@@ -52,30 +52,7 @@ const PATCH = async ({req, res}: RouteArgs) => {
 
 }
 
-type RouteArgsWithoutSession = Omit<RouteArgs, 'session'>
-
-const DELETE = async ({req, res}: RouteArgsWithoutSession) => {
-    try {
-        const data = req.body;
-        delete data.id;
-
-        await db.product.delete({
-            where: {
-                id: req.body.productId,
-            },
-        })
-
-        return res.status(200).json({message: 'Product removed successfully'})
-
-    } catch (e) {
-        console.log(e)
-        return res.status(500).json({ error: 'Internal Server Error' })
-    }
-
-}
-
 async function handler(req: NextApiRequest, res: NextApiResponse, session: Session) {
-    console.log(req.body, 'bBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB')
 
     if(req.method === 'POST') {
         const shape = z.object({
@@ -96,14 +73,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse, session: Sessi
         })
         withValidate({ req, res, session }, shape, PATCH)
     }
-
-    if(req.method === 'DELETE') {
-        console.log(req.body, 'AAAAAAAAAAAAAAAAAAAAAA')
-        const shape = z.object({
-            productId: z.string().cuid()
-        })
-        withValidate({req, res}, shape, DELETE)
-    }
 }
 
-export default withMethods(['POST', 'PATCH', 'DELETE'], withAuth(handler))
+export default withMethods(['POST', 'PATCH'], withAuth(handler))
