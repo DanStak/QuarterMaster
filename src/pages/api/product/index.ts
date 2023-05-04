@@ -4,7 +4,7 @@ import {z} from "zod";
 import {withValidate} from "@/lib/api-middlewares/with-validate";
 import {withMethods} from "@/lib/api-middlewares/with-methods";
 import {withAuth} from "@/lib/api-middlewares/with-auth";
-import {RouteArgs} from "@/types/route-args";
+import {RouteArgs} from "@/types";
 import {db} from "@/lib/db";
 
 const POST = async ({req, res}: RouteArgs) => {
@@ -14,7 +14,6 @@ const POST = async ({req, res}: RouteArgs) => {
         if(existedProduct && req.body.forceAdd) {
             return res.status(200).json({ code: 'product-with-this-name-exist' });
         }
-        console.log(req.body)
 
         await db.product.create({
             data: {
@@ -22,7 +21,7 @@ const POST = async ({req, res}: RouteArgs) => {
             }
         })
 
-        return res.status(200).json({message: 'Product added successfully'})
+        return res.status(200).json({message: 'Product created successfully'})
 
     } catch (e) {
         return res.status(500).json({ error: 'Internal Server Error' })

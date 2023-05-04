@@ -6,9 +6,6 @@ import {signIn, useSession} from "next-auth/react";
 export const SignInButton = () => {
 
     const session = useSession();
-
-    console.log(session);
-
     const signInWithGoogle = async () => {
         try {
             await signIn('google');

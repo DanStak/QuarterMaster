@@ -1,38 +1,29 @@
-'use client'
 import React from 'react';
-import {Trash} from "lucide-react";
-import {useRouter} from "next/navigation";
-import {deleteProduct} from "@/helpers/api-calls/product/delete-product";
+import ProductItem from "@/components/ProductItem";
+import {db} from "@/lib/db";
+import {ProductWithItems} from "@/types";
 
-interface Product {
-    name: string,
-    id: string,
-}
 interface ProductsListProps {
-    items: Product[],
+    stockId: string,
 }
-export const ProductsList: React.FC<ProductsListProps> = ({items}) => {
-    const router = useRouter();
-    const handleDelete = async (productId: string) => {
-        try {
-            await deleteProduct(productId)
-            router.refresh();
-        } catch (error) {
-            console.error(error, 'Deleting product failed')
+const getProductsByStockroomIdWithItems = async (id: string): Promise<ProductWithItems[]> => {
+    const products = await db.product.findMany({
+        where: {
+            stockroomId: id
+        },
+        include: {
+            items: true,
         }
-    }
-
+    })
+    //TODO Fix types for returning
+    return products || [];
+}
+export const ProductsList = async ({ stockId }: ProductsListProps) => {
+    const products = await getProductsByStockroomIdWithItems(stockId);
     return (
         <div>
-            {items.map(product => (
-                <div className='flex flex-row justify-between px-1 py-3.5 items-center' key={product.id}>
-                    <div>
-                        <span>{product.name}</span>
-                    </div>
-                    <button onClick={() => handleDelete(product.id)}>
-                        <Trash size={30}/>
-                    </button>
-                </div>
+            {products.map(product => (
+                <ProductItem key={product.id} product={product}/>
             ))}
         </div>
     );

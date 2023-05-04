@@ -16,22 +16,11 @@ const getStockroomById = async (id: string) => {
     });
 
     return stockroom || null
-}
-
-const getProductsByStockroomId = async (id: string) => {
-    const products = await db.product.findMany({
-        where: {
-            stockroomId: id
-        }
-    })
-
-    return products || [];
-}
+};
 
 
 const Stockroom = async ({ params }: StockroomPageProps) => {
     const data = await getStockroomById(params.stockId);
-    const products = await getProductsByStockroomId(params.stockId);
 
     if(data === null) return notFound();
 
@@ -39,7 +28,7 @@ const Stockroom = async ({ params }: StockroomPageProps) => {
         <div>
             {data.name}
 
-            <ProductsList items={products}/>
+            <ProductsList stockId={params.stockId}/>
 
             <ProductCreateForm/>
         </div>

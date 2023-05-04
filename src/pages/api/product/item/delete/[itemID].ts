@@ -8,17 +8,17 @@ type RouteArgsWithoutSession = Omit<RouteArgs, 'session'>
 
 const DELETE = async ({req, res}: RouteArgsWithoutSession) => {
     try {
-        const id = Array.isArray(req.query?.productId) ? req.query?.productId[0] : req.query.productId
+        const id = Array.isArray(req.query?.itemId) ? req.query?.itemId[0] : req.query.itemId
 
         if(!!id) {
-            await db.product.delete({
+            await db.item.delete({
                 where: {
                     id
                 },
             })
-            return res.status(200).json({message: 'Product removed successfully'})
+            return res.status(200).json({message: 'Item removed successfully'})
         } else {
-            return res.status(404).json({message: 'Product not found'})
+            return res.status(404).json({message: 'Item not found'})
         }
 
     } catch (e) {

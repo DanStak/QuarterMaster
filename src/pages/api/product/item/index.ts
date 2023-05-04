@@ -1,56 +1,58 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {withMethods} from "@/lib/api-middlewares/with-methods";
-import {z} from "zod";
-import {withAuth} from "@/lib/api-middlewares/with-auth";
 import {Session} from "next-auth";
-import {db} from "@/lib/db";
+import {z} from "zod";
 import {withValidate} from "@/lib/api-middlewares/with-validate";
+import {withMethods} from "@/lib/api-middlewares/with-methods";
+import {withAuth} from "@/lib/api-middlewares/with-auth";
 import {RouteArgs} from "@/types";
+import {db} from "@/lib/db";
+import {RemoveCause} from ".prisma/client";
 
-const POST = async ({req, res, session}: RouteArgs) => {
+const POST = async ({req, res}: RouteArgs) => {
     try {
-
-        const existedStock = await db.stockroom.findFirst({where: { name: req.body.name }});
-
-        if(!!existedStock) return res.status(400).json({message: 'Magazyn o tej nazwie już istnieje.'})
-
-        await db.stockroom.create({
+        await db.item.create({
             data: {
-                name: req.body.name,
-                ownerId: session!.user.id
+                ...req.body
             }
         })
 
-        return res.status(200).json({message: 'Stockroom created successfully'})
+        return res.status(200).json({message: 'Item added successfully'})
 
-    } catch (error) {
+    } catch (e) {
         return res.status(500).json({ error: 'Internal Server Error' })
     }
+
 }
 
 const PATCH = async ({req, res}: RouteArgs) => {
     try {
-        await db.stockroom.update({
+        const data = req.body;
+        delete data.id;
+
+        await db.item.update({
             where: {
                 id: req.body.id
             },
             data: {
-                name: req.body.name,
+                ...data
             }
         })
 
-        return res.status(200).json({ message: 'Stockroom updated successfully' })
+        return res.status(200).json({message: 'Product updated successfully'})
 
-    } catch (error) {
+    } catch (e) {
         return res.status(500).json({ error: 'Internal Server Error' })
     }
+
 }
+
 async function handler(req: NextApiRequest, res: NextApiResponse, session: Session) {
 
     if(req.method === 'POST') {
-
         const shape = z.object({
-            name: z.string().min(5)
+            productId: z.string().cuid(),
+            expirationDate: z.date().optional(),
+            price: z.number().nonnegative().optional(),
         })
 
         await withValidate({req, res, session}, shape, POST)
@@ -59,8 +61,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse, session: Sessi
     if(req.method === 'PATCH') {
 
         const shape = z.object({
-            name: z.string().min(5),
             id: z.string().cuid(),
+            expirationDate: z.date().optional(),
+            price: z.number().nonnegative().optional(),
+            removeCause: z.nativeEnum(RemoveCause)
         })
         withValidate({ req, res, session }, shape, PATCH)
     }

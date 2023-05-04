@@ -1,13 +1,9 @@
 'use client'
 
 import React from 'react';
-import {useSession, signOut} from "next-auth/react";
+import {signOut} from "next-auth/react";
 
 export const SignOutButton = () => {
-
-    const session = useSession();
-
-    console.log(session);
 
     const signOutGoogle = async () => {
         try {

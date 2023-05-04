@@ -1,6 +1,6 @@
 import {validateRequestBody} from "@/helpers/validate-request-body";
 import {sendApiValidationErrors} from "@/helpers/send-api-validation-error";
-import {RouteArgs} from "@/types/route-args";
+import {RouteArgs} from "@/types";
 import {z} from "zod";
 
 type Handler = (args: RouteArgs) => unknown | Promise<unknown>;
