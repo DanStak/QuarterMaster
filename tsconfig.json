@@ -25,6 +25,7 @@
       "@/lib/*": ["./src/libraries/*"],
       "@/components/*": ["./src/components/*"],
       "@/types": ["./src/types/index"],
+      "@/db-helpers/*": ["./src/helpers/db/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

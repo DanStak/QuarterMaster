@@ -4,22 +4,10 @@ import {db} from "@/lib/db";
 import {ProductWithItems} from "@/types";
 
 interface ProductsListProps {
-    stockId: string,
+    products: ProductWithItems[],
 }
-const getProductsByStockroomIdWithItems = async (id: string): Promise<ProductWithItems[]> => {
-    const products = await db.product.findMany({
-        where: {
-            stockroomId: id
-        },
-        include: {
-            items: true,
-        }
-    })
-    //TODO Fix types for returning
-    return products || [];
-}
-export const ProductsList = async ({ stockId }: ProductsListProps) => {
-    const products = await getProductsByStockroomIdWithItems(stockId);
+
+export const ProductsList = ({ products }: ProductsListProps) => {
     return (
         <div>
             {products.map(product => (

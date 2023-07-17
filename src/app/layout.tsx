@@ -1,6 +1,7 @@
 import './globals.css'
 import {Providers} from "@/components/Providers";
 import type { ReactNode } from 'react'
+import OptionsMenu from "@/components/OptionsMenu";
 
 export default function RootLayout({
   children,
@@ -12,6 +13,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
+            <OptionsMenu/>
         </Providers>
       </body>
     </html>
